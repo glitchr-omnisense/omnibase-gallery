@@ -1,0 +1,19 @@
+{#
+    The photographs of an album, in order: each opens larger (omnibase's
+    |lightbox, one group per album), with its caption, its label and its
+    credit under it. `photos` is the list, `group` the lightbox's name.
+#}
+<div class="gallery-photos" data-count="{{ photos|length }}">
+    {% for photo in photos %}{% if photo.hasFile() %}
+    <figure class="gallery-photo{{ photo.cover ? ' is-cover' }}">
+        {% if photo.label %}<span class="gallery-photo-label">{{ photo.label }}</span>{% endif %}
+        {{ photo.getFile()|lightbox({alt: photo.alt, loading: loop.first ? 'eager' : 'lazy', decoding: 'async'}, group|default('gallery'), photo.caption ?? photo.alt, {}, 800, 1600) }}
+        {% if photo.caption or photo.credit %}
+        <figcaption>
+            {% if photo.caption %}<span class="gallery-photo-caption">{{ photo.caption }}</span>{% endif %}
+            {% if photo.credit %}<span class="gallery-photo-credit">{{ photo.creditLine }}</span>{% endif %}
+        </figcaption>
+        {% endif %}
+    </figure>
+    {% endif %}{% endfor %}
+</div>

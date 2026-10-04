@@ -1,0 +1,39 @@
+{
+    "name": "omnibase/gallery",
+    "description": "Albums of photographs for omnibase: an Album is a Thread, its Photos are ordered, one album is one creation.",
+    "type": "symfony-bundle",
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Marco Meyer",
+            "email": "marco.meyer@glitchr.io"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "doctrine/orm": "^2.15|^3.0",
+        "glitchr/omnibase": "3.0.*-dev",
+        "symfony/config": "^6.0|^7.0|^8.0",
+        "symfony/dependency-injection": "^6.0|^7.0|^8.0",
+        "symfony/form": "^6.0|^7.0|^8.0",
+        "symfony/http-kernel": "^6.0|^7.0|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5|^11.0|^12.0"
+    },
+    "suggest": {
+        "omnibase/admin": "The back office screens: albums, their photographs in order, Publish and Featured."
+    },
+    "autoload": {
+        "psr-4": {
+            "Base\\Gallery\\": "./src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Base\\Gallery\\Tests\\": "./tests"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

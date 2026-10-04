@@ -1,0 +1,13 @@
+{# An album on a list: its cover, its title and preview. `heading` is the title's level (3 by default). #}
+{% set cover = album.cover %}
+<article class="gallery-card{{ album.featured ? ' is-featured' }}">
+    <a class="gallery-card-cover" href="{{ path('gallery_album', {slug: album.slug}) }}" {% if cover %}aria-hidden="true" tabindex="-1"{% endif %}>
+        {% if cover and cover.hasFile() %}<img src="{{ cover.getFile()|picture(800) }}" alt="" loading="lazy" decoding="async">{% endif %}
+    </a>
+    <div class="gallery-card-body">
+        {% block gallery_card_meta %}{% if album.madeAt %}<p class="gallery-card-meta"><time datetime="{{ album.madeAt|date('Y-m-d') }}">{{ album.madeAt|date('Y') }}</time></p>{% endif %}{% endblock %}
+        <h{{ heading|default(3) }} class="gallery-card-title"><a href="{{ path('gallery_album', {slug: album.slug}) }}">{{ album.title }}</a></h{{ heading|default(3) }}>
+        {% set excerpt = album.excerpt|striptags|trim %}
+        {% if excerpt %}<p class="gallery-card-excerpt">{{ excerpt|length > 160 ? excerpt|slice(0, 160)|trim ~ '…' : excerpt }}</p>{% endif %}
+    </div>
+</article>

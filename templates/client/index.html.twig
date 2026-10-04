@@ -1,0 +1,42 @@
+{# The gallery: every published album, or those of one taxon, a page at a time. #}
+{% extends 'layout1.html.twig' %}
+
+{% set heading = taxon ? taxon ~ '' : '@gallery.index.title'|trans %}
+{% set lead = taxon ? taxon.description|default('') : '@gallery.index.lead'|trans %}
+
+{% block title %}{{ heading }}{% endblock %}
+{% block description %}{{ lead|striptags }}{% endblock %}
+{% block stylesheets %}{{ parent() }}<link rel="stylesheet" href="{{ asset('bundles/gallery/css/gallery.css') }}">{% endblock %}
+
+{% block content %}
+<section class="gallery">
+    {% block gallery_head %}
+    <header class="gallery-head">
+        <p class="gallery-eyebrow">{% if taxon %}<a href="{{ path('gallery_index') }}">{{ '@gallery.index.title'|trans }}</a>{% else %}{{ '@gallery.index.eyebrow'|trans }}{% endif %}</p>
+        <h1>{{ heading }}</h1>
+        {% if lead %}<p class="gallery-lead">{{ lead|striptags }}</p>{% endif %}
+    </header>
+    {% endblock %}
+
+    {% block gallery_filters %}{% include '@Gallery/client/_filters.html.twig' %}{% endblock %}
+
+    {% block gallery_list %}
+    {% if albums %}
+    <div class="gallery-grid">
+        {% for album in albums %}{% include '@Gallery/client/_album_card.html.twig' with {album: album, heading: 2} only %}{% endfor %}
+    </div>
+    {% else %}
+    <p class="gallery-empty">{{ '@gallery.index.empty'|trans }}</p>
+    {% endif %}
+    {% endblock %}
+
+    {% if pages > 1 %}
+    {% set base = taxon ? path('gallery_taxon', {slug: taxon.slug}) : path('gallery_index') %}
+    <nav class="gallery-pages" aria-label="{{ '@gallery.index.pages'|trans }}">
+        {% for number in 1..pages %}
+        <a href="{{ base }}?{{ {tag: tag, page: number > 1 ? number : null}|filter(v => v is not null)|url_encode }}" {{ number == page ? 'aria-current="page"' }}>{{ number }}</a>
+        {% endfor %}
+    </nav>
+    {% endif %}
+</section>
+{% endblock %}

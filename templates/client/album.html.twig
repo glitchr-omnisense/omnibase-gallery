@@ -1,0 +1,43 @@
+{# One album: its title, when it was made, its photographs in order, its text. #}
+{% extends 'layout1.html.twig' %}
+
+{% set cover = album.cover %}
+
+{% block title %}{{ album.title }}{% endblock %}
+{% block description %}{{ album.excerpt|striptags }}{% endblock %}
+{% block stylesheets %}{{ parent() }}<link rel="stylesheet" href="{{ asset('bundles/gallery/css/gallery.css') }}">{% endblock %}
+
+{% block content %}
+<article class="gallery gallery-album">
+    {% block gallery_album_head %}
+    <header class="gallery-head">
+        <p class="gallery-eyebrow"><a href="{{ path('gallery_index') }}">{{ '@gallery.index.title'|trans }}</a>{% for taxon in album.taxa %} · <a href="{{ path('gallery_taxon', {slug: taxon.slug}) }}">{{ taxon }}</a>{% endfor %}</p>
+        <h1>{{ album.title }}</h1>
+        {% if album.madeAt %}<p class="gallery-album-date"><time datetime="{{ album.madeAt|date('Y-m-d') }}">{{ album.madeAt|format_date('long') }}</time></p>{% endif %}
+        {% if album.excerpt %}<p class="gallery-lead">{{ album.excerpt|striptags }}</p>{% endif %}
+    </header>
+    {% endblock %}
+
+    {% block gallery_album_photos %}
+    {% include '@Gallery/client/_photos.html.twig' with {photos: photos, group: 'album-' ~ album.id} only %}
+    {% endblock %}
+
+    {% block gallery_album_body %}
+    {% if album.content %}<div class="gallery-album-text">{{ album.content|wysiwyg|raw }}</div>{% endif %}
+    {% if album.tags|length %}
+    <p class="gallery-tags">{% for tag in album.tags %}<a href="{{ path('gallery_index') }}?tag={{ tag.slug|url_encode }}">{{ tag }}</a>{% endfor %}</p>
+    {% endif %}
+    {% endblock %}
+
+    {% block gallery_album_after %}{% endblock %}
+
+    {% if previous or next %}
+    <nav class="gallery-neighbours" aria-label="{{ '@gallery.album.neighbours'|trans }}">
+        {% if previous %}<a rel="prev" href="{{ path('gallery_album', {slug: previous.slug}) }}"><span>{{ '@gallery.album.previous'|trans }}</span>{{ previous.title }}</a>{% else %}<span></span>{% endif %}
+        {% if next %}<a rel="next" href="{{ path('gallery_album', {slug: next.slug}) }}"><span>{{ '@gallery.album.next'|trans }}</span>{{ next.title }}</a>{% endif %}
+    </nav>
+    {% endif %}
+
+    {% if jsonld %}<script type="application/ld+json">{{ jsonld|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_HEX_TAG'))|raw }}</script>{% endif %}
+</article>
+{% endblock %}

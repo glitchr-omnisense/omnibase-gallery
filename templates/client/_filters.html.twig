@@ -1,0 +1,18 @@
+{# The list's filters: the taxa (each a page of its own), then the tags (?tag=) of what is listed. #}
+{% set base = taxon ? path('gallery_taxon', {slug: taxon.slug}) : path('gallery_index') %}
+{% if taxa|length > 1 %}
+<nav class="gallery-taxa" aria-label="{{ '@gallery.index.taxa'|trans }}">
+    <a href="{{ path('gallery_index') }}" {{ taxon ? '' : 'aria-current="page"' }}>{{ '@gallery.index.all'|trans }}</a>
+    {% for item in taxa %}{% if item.parent is null %}
+    <a href="{{ path('gallery_taxon', {slug: item.slug}) }}" {{ taxon and taxon.id == item.id ? 'aria-current="page"' }}>{{ item }}</a>
+    {% endif %}{% endfor %}
+</nav>
+{% endif %}
+{% if tags|length %}
+<nav class="gallery-tags" aria-label="{{ '@gallery.index.tags'|trans }}">
+    {% if tag %}<a href="{{ base }}" class="gallery-tag-clear">{{ '@gallery.index.every_tag'|trans }}</a>{% endif %}
+    {% for item in tags %}
+    <a href="{{ base }}?tag={{ item.slug|url_encode }}" {{ tag == item.slug ? 'aria-current="true"' }}>{{ item }}</a>
+    {% endfor %}
+</nav>
+{% endif %}

@@ -1,0 +1,53 @@
+index:
+  title: "Galerie"
+  eyebrow: "En images"
+  lead: "Les créations, album par album."
+  all: "Tout"
+  taxa: "Catégories"
+  tags: "Filtrer par mot-clé"
+  every_tag: "Tous les mots-clés"
+  empty: "Aucun album ici pour l'instant."
+  pages: "Pages"
+
+album:
+  neighbours: "Albums voisins"
+  previous: "Précédent"
+  next: "Suivant"
+  photos: "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}"
+
+admin:
+  album:
+    title: "Titre"
+    made_at: "Réalisé le"
+    made_at_help: "Le jour où le travail a été fait : c'est l'ordre de la liste, du plus récent au plus ancien."
+    published_at: "Publié le"
+    featured: "À la une"
+    excerpt: "Aperçu"
+    excerpt_help: "Deux lignes, sous le titre et sur la liste."
+    content: "Texte"
+    tags: "Mots-clés"
+    taxa: "Catégories"
+    photos: "Photos"
+    photos_help: "Dans l'ordre de leur place ; enregistré, l'album les renumérote 1, 2, 3… Une seule couverture : sans couverture cochée, c'est la première."
+    action:
+      publish: "Publier"
+      unpublish: "Dépublier"
+      feature: "Mettre à la une"
+      unfeature: "Retirer de la une"
+    flash:
+      published: "L'album est publié."
+      unpublished: "L'album est repassé en brouillon."
+      featured: "L'album est à la une."
+      unfeatured: "L'album n'est plus à la une."
+  photo:
+    album: "Album"
+    file: "Photo"
+    position: "Place"
+    position_help: "Vide : à la suite."
+    caption: "Légende"
+    alt: "Texte de remplacement"
+    alt_help: "Ce qu'un lecteur d'écran dit de l'image. Vide : la légende, sinon le titre de l'album."
+    credit: "Crédit"
+    label: "Étiquette"
+    label_help: "Libre : « Avant », « Après », « Détail »."
+    cover: "Couverture"

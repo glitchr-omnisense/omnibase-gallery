@@ -1,0 +1,53 @@
+index:
+  title: "Galerie"
+  eyebrow: "In Bildern"
+  lead: "Die Arbeiten, Album für Album."
+  all: "Alle"
+  taxa: "Kategorien"
+  tags: "Nach Stichwort filtern"
+  every_tag: "Alle Stichwörter"
+  empty: "Hier gibt es noch kein Album."
+  pages: "Seiten"
+
+album:
+  neighbours: "Benachbarte Alben"
+  previous: "Zurück"
+  next: "Weiter"
+  photos: "{count, plural, =0 {Kein Foto} one {# Foto} other {# Fotos}}"
+
+admin:
+  album:
+    title: "Titel"
+    made_at: "Ausgeführt am"
+    made_at_help: "Der Tag, an dem die Arbeit gemacht wurde: die Reihenfolge der Liste, das Neueste zuerst."
+    published_at: "Veröffentlicht am"
+    featured: "Hervorgehoben"
+    excerpt: "Vorschau"
+    excerpt_help: "Zwei Zeilen, unter dem Titel und in der Liste."
+    content: "Text"
+    tags: "Stichwörter"
+    taxa: "Kategorien"
+    photos: "Fotos"
+    photos_help: "In der Reihenfolge ihres Platzes; beim Speichern nummeriert das Album sie neu: 1, 2, 3… Nur ein Titelbild: ist keines angekreuzt, das erste."
+    action:
+      publish: "Veröffentlichen"
+      unpublish: "Zurückziehen"
+      feature: "Hervorheben"
+      unfeature: "Nicht mehr hervorheben"
+    flash:
+      published: "Das Album ist veröffentlicht."
+      unpublished: "Das Album ist wieder ein Entwurf."
+      featured: "Das Album ist hervorgehoben."
+      unfeatured: "Das Album ist nicht mehr hervorgehoben."
+  photo:
+    album: "Album"
+    file: "Foto"
+    position: "Platz"
+    position_help: "Leer: hinter den anderen."
+    caption: "Bildunterschrift"
+    alt: "Alternativtext"
+    alt_help: "Was ein Screenreader über das Bild sagt. Leer: die Bildunterschrift, sonst der Titel des Albums."
+    credit: "Bildnachweis"
+    label: "Etikett"
+    label_help: "Frei: „Vorher“, „Nachher“, „Detail“."
+    cover: "Titelbild"

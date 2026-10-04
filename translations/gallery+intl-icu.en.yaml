@@ -1,0 +1,53 @@
+index:
+  title: "Gallery"
+  eyebrow: "In pictures"
+  lead: "The creations, album by album."
+  all: "All"
+  taxa: "Categories"
+  tags: "Filter by keyword"
+  every_tag: "Every keyword"
+  empty: "No album here yet."
+  pages: "Pages"
+
+album:
+  neighbours: "Neighbouring albums"
+  previous: "Previous"
+  next: "Next"
+  photos: "{count, plural, =0 {No photograph} one {# photograph} other {# photographs}}"
+
+admin:
+  album:
+    title: "Title"
+    made_at: "Made on"
+    made_at_help: "The day the work was done: the list's order, newest first."
+    published_at: "Published on"
+    featured: "Featured"
+    excerpt: "Preview"
+    excerpt_help: "Two lines, under the title and on the list."
+    content: "Text"
+    tags: "Keywords"
+    taxa: "Categories"
+    photos: "Photographs"
+    photos_help: "In the order of their place; once saved, the album renumbers them 1, 2, 3… One cover only: with none ticked, the first one."
+    action:
+      publish: "Publish"
+      unpublish: "Unpublish"
+      feature: "Feature"
+      unfeature: "Unfeature"
+    flash:
+      published: "The album is published."
+      unpublished: "The album is a draft again."
+      featured: "The album is featured."
+      unfeatured: "The album is no longer featured."
+  photo:
+    album: "Album"
+    file: "Photograph"
+    position: "Place"
+    position_help: "Empty: after the others."
+    caption: "Caption"
+    alt: "Alternative text"
+    alt_help: "What a screen reader says of the picture. Empty: the caption, else the album's title."
+    credit: "Credit"
+    label: "Label"
+    label_help: "Free: \"Before\", \"After\", \"Detail\"."
+    cover: "Cover"
