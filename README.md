@@ -61,5 +61,4 @@ php vendor/bin/phpunit -c vendor/omnibase/gallery/phpunit.xml.dist      # from a
 
 ## Licence
 
-LGPL-3.0-or-later. See `LICENSE` (the GNU LGPL v3) and `COPYING` (the GNU GPL
-v3 it supplements).
+MIT since 2026-10-09; earlier versions remain published under LGPL-3.0-or-later (`LICENSE`).
