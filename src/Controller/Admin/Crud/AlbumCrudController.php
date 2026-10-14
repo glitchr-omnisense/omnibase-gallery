@@ -76,11 +76,11 @@ class AlbumCrudController extends AbstractCrudController
         yield IdField::new('id')->onlyOnIndex();
         yield TextField::new('title', '@gallery.admin.album.title')->setColumns(8);
         yield StateField::new('state')->setColumns(4);
-        yield SlugField::new('slug')->setColumns(4)->hideOnIndex();
+        yield SlugField::new('slug')->setTargetFieldName('title')->setColumns(4)->hideOnIndex();
         yield DateField::new('madeAt', '@gallery.admin.album.made_at')->setColumns(3)->setRequired(false)->setHelp('@gallery.admin.album.made_at_help');
-        yield DateTimeField::new('publishedAt', '@gallery.admin.album.published_at')->setColumns(3)->hideOnIndex();
+        yield DateTimeField::new('publishedAt', '@gallery.admin.album.published_at')->setRequired(false)->setColumns(3)->hideOnIndex();
         yield BooleanField::new('featured', '@gallery.admin.album.featured')->setColumns(2);
-        yield TextareaField::new('excerpt', '@gallery.admin.album.excerpt')->hideOnIndex()->setHelp('@gallery.admin.album.excerpt_help');
+        yield TextareaField::new('excerpt', '@gallery.admin.album.excerpt')->setRequired(false)->hideOnIndex()->setHelp('@gallery.admin.album.excerpt_help');
         yield EditorField::new('content', '@gallery.admin.album.content')->hideOnIndex();
         yield SelectField::new('tags', '@gallery.admin.album.tags')->allowMultipleChoices()->setRequired(false)->setColumns(6)->hideOnIndex();
         yield SelectField::new('taxa', '@gallery.admin.album.taxa')->allowMultipleChoices()->setRequired(false)->setColumns(6)->hideOnIndex();
