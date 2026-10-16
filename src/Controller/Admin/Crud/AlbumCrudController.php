@@ -20,9 +20,12 @@ use Base\Field\TextareaField;
 use Base\Field\TextField;
 use Base\Gallery\Controller\Admin\OpenToAdminsTrait;
 use Base\Gallery\Entity\Album;
+use Base\Entity\Thread\Taxon;
 use Base\Gallery\Form\PhotoType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * An album in the back office: its title, the day the work was made, the
@@ -37,6 +40,15 @@ use Symfony\Component\HttpFoundation\Response;
 class AlbumCrudController extends AbstractCrudController
 {
     use OpenToAdminsTrait;
+
+    /** The taxa an album is classified by (gallery.taxon_class): the families of the site's own class when it names one. */
+    protected string $taxonClass = Taxon::class;
+
+    #[Required]
+    public function setTaxonClass(#[Autowire('%gallery.taxon_class%')] string $taxonClass = Taxon::class): void
+    {
+        $this->taxonClass = $taxonClass;
+    }
 
     public static function getEntityFqcn(): string
     {
@@ -83,7 +95,9 @@ class AlbumCrudController extends AbstractCrudController
         yield TextareaField::new('excerpt', '@gallery.admin.album.excerpt')->setRequired(false)->hideOnIndex()->setHelp('@gallery.admin.album.excerpt_help');
         yield EditorField::new('content', '@gallery.admin.album.content')->hideOnIndex();
         yield SelectField::new('tags', '@gallery.admin.album.tags')->allowMultipleChoices()->setRequired(false)->setColumns(6)->hideOnIndex();
-        yield SelectField::new('taxa', '@gallery.admin.album.taxa')->allowMultipleChoices()->setRequired(false)->setColumns(6)->hideOnIndex();
+        // The taxa of gallery.taxon_class only: with a site's own class (a Category), the other bundles'
+        // taxa - a shop's categories of the same names - are not offered beside its families, twice each.
+        yield SelectField::new('taxa', '@gallery.admin.album.taxa')->setClass($this->taxonClass)->allowMultipleChoices()->setRequired(false)->setColumns(6)->hideOnIndex();
         yield CollectionField::new('photos', '@gallery.admin.album.photos')->setEntryType(PhotoType::class)->allowAdd()->allowDelete()->allowObject()->hideOnIndex()
             ->setFormTypeOptions(['by_reference' => false])->setHelp('@gallery.admin.album.photos_help');
     }

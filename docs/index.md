@@ -46,7 +46,7 @@ gallery:
 |---|---|---|
 | `path` | `galerie` | The first segment of the three routes. One or more URL segments, no slash around. |
 | `per_page` | `24` | |
-| `taxon_class` | `Base\Entity\Thread\Taxon` | With the default, a taxon has a page once it classifies a published album. With an application's own class (`App\Entity\Portfolio\Category`), every taxon of that class has a page, empty or not - and the taxa of the other bundles (a shop's, a FAQ's) never do. Listed by their `position` when the class has that field. |
+| `taxon_class` | `Base\Entity\Thread\Taxon` | With the default, a taxon has a page once it classifies a published album. With an application's own class (`App\Entity\Portfolio\Category`), every taxon of that class has a page, empty or not - and the taxa of the other bundles (a shop's, a FAQ's) never do, nor are they offered in an album's screen of the back office. Listed by their `position` when the class has that field. |
 | `sitemap` | `true` | |
 
 The parameters are flat: `%gallery.path%`, `%gallery.per_page%`,
