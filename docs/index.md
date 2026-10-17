@@ -28,7 +28,7 @@ bin/console assets:install public --symlink --relative                  # bundle
 bin/console cache:pool:clear --all                                      # omnibase keeps the routes in a pool
 ```
 
-It needs `glitchr/omnibase` alone; with `omnibase/admin` installed the back
+It needs `omniscient/omnibase` alone; with `omnibase/admin` installed the back
 office screens are registered as well.
 
 ## Configuration
