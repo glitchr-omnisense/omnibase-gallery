@@ -1,6 +1,6 @@
 # Gallery
 
-Albums of photographs for the [omnibase](https://github.com/glitchr-studio/omnibase)
+Albums of photographs for the [omnibase](https://github.com/glitchr-omnisense/omnibase)
 sites. **One album is one creation**: a sign hung, a van wrapped, a concert, a
 recipe - shown by its photographs, in order.
 
@@ -20,7 +20,7 @@ recipe - shown by its photographs, in order.
   wedding, a dish) is a subclass of `Album`.
 
 Nothing else: it does not follow a work while it is being done (that is
-[omnibase/forge](https://github.com/glitchr-studio/omnibase-forge)), and it
+[omnibase/forge](https://github.com/glitchr-omnisense/omnibase-forge)), and it
 knows no trade. No scroll library, no animation tied to scrolling.
 
 ## Install
