@@ -1,9 +1,36 @@
 ---
 title: Pages, Twig and styles
-order: 20
+order: 30
 ---
 
 # Pages, Twig and styles
+
+## The routes
+
+| Route | Path | |
+|---|---|---|
+| `gallery_index` | `/{path}` | every published album; `?tag=slug` filters, `?page=2` pages |
+| `gallery_taxon` | `/{path}/{slug}` | the albums of one taxon, with its label and description |
+| `gallery_album` | `/{path}/{slug}` | one album |
+
+A taxon's page and an album's page share one pattern: the taxon is looked
+for first. Give an album another slug than a taxon's.
+
+The list's order: the featured albums first, then the most recent work
+(`madeAt`, else the publication date).
+
+## Sitemap
+
+`Base\Gallery\EventListener\SitemapListener` adds every published album and
+every taxon page to omnibase's `/sitemap.xml` (`SitemapEvent::BUILD`), the
+albums with the day they last changed.
+
+## JSON-LD
+
+An album's page carries schema.org's `ImageGallery`
+(`Base\Gallery\Service\JsonLd::album()`): its name, description, dates,
+keywords (its tags) and each photograph as an `ImageObject` with its
+address, caption and credit.
 
 ## In a site's own pages
 

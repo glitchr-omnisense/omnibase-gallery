@@ -47,10 +47,14 @@ Then a migration (`gallery_album`, `gallery_photo`) and
 
 ## Documentation
 
-- [Installation and configuration](docs/index.md)
+- [Overview](docs/index.md)
+- [Installation and configuration](docs/installation.md)
+- [Albums and photographs](docs/concepts.md)
 - [Pages, Twig and styles](docs/templates.md)
 - [The back office](docs/admin.md)
 - [Extending Album in an application](docs/extending.md)
+- [Configuration reference](docs/configuration.md)
+- [Testing](docs/testing.md)
 
 ## Tests
 

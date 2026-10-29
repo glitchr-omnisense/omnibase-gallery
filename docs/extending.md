@@ -1,6 +1,6 @@
 ---
 title: Extending Album in an application
-order: 40
+order: 37
 ---
 
 # Extending Album in an application
