@@ -2,6 +2,7 @@
 
 namespace Base\Gallery\Entity;
 
+use Base\Contract\Link;
 use Base\Database\Attribute\DiscriminatorEntry;
 use Base\Entity\Thread;
 use Base\Enum\ThreadState;
@@ -36,7 +37,7 @@ class Album extends Thread implements LinkableInterface
 
     public function __toLink(array $routeParameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): ?string
     {
-        return $this->getRouter()->generate('gallery_album', array_merge($routeParameters, ['slug' => $this->getSlug()]), $referenceType);
+        return Link::to('gallery_album', array_merge($routeParameters, ['slug' => $this->getSlug()]), $referenceType);
     }
 
     /** The day the work was made (a sign hung, a van wrapped): the list's order, newest first. */
