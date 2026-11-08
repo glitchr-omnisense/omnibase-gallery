@@ -2,7 +2,7 @@
 
 namespace Base\Gallery\Form;
 
-use Base\Field\Type\ImageType;
+use Omnibridge\Symfony\Omnibase\Field\Type\ImageType;
 use Base\Gallery\Entity\Photo;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
