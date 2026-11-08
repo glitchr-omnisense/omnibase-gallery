@@ -22,7 +22,7 @@ use Base\Gallery\Controller\Admin\OpenToAdminsTrait;
 use Base\Gallery\Entity\Album;
 use Base\Entity\Thread\Taxon;
 use Base\Gallery\Form\PhotoType;
-use Doctrine\ORM\EntityManagerInterface;
+use Omnibridge\Persistence\UnitOfWork;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -115,16 +115,16 @@ class AlbumCrudController extends AbstractCrudController
     }
 
     /** Saved in the order typed: the places rewritten 1, 2, 3..., one cover at most. */
-    public function persistEntity(EntityManagerInterface $entityManager, object $entity): void
+    public function persistRecord(UnitOfWork $unitOfWork, object $entity): void
     {
         $this->tidy($entity);
-        parent::persistEntity($entityManager, $entity);
+        parent::persistRecord($unitOfWork, $entity);
     }
 
-    public function updateEntity(EntityManagerInterface $entityManager, object $entity): void
+    public function updateRecord(UnitOfWork $unitOfWork, object $entity): void
     {
         $this->tidy($entity);
-        parent::updateEntity($entityManager, $entity);
+        parent::updateRecord($unitOfWork, $entity);
     }
 
     #[AdminAction('/{entityId}/publish')]
