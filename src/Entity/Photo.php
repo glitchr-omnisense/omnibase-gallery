@@ -110,7 +110,7 @@ class Photo
     public function getCredit(): ?string { return $this->credit; }
     public function setCredit(?string $credit): self { $this->credit = self::clean($credit); return $this; }
 
-    /** The credit with its sign: "Anna Meyer" is printed "© Anna Meyer". */
+    /** The credit with its sign: "Jeanne Exemple" is printed "© Jeanne Exemple". */
     public function getCreditLine(): ?string
     {
         if (null === $this->credit) {

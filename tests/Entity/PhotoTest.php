@@ -45,9 +45,9 @@ final class PhotoTest extends TestCase
         $photo = new TestPhoto();
         self::assertNull($photo->getCreditLine());
 
-        self::assertSame('© Anna Meyer', $photo->setCredit('Anna Meyer')->getCreditLine());
-        self::assertSame('© Anna Meyer', $photo->setCredit('© Anna Meyer')->getCreditLine());
-        self::assertSame('Photo : Anna Meyer', $photo->setCredit('Photo : Anna Meyer')->getCreditLine());
+        self::assertSame('© Jeanne Exemple', $photo->setCredit('Jeanne Exemple')->getCreditLine());
+        self::assertSame('© Jeanne Exemple', $photo->setCredit('© Jeanne Exemple')->getCreditLine());
+        self::assertSame('Photo : Jeanne Exemple', $photo->setCredit('Photo : Jeanne Exemple')->getCreditLine());
     }
 
     public function testThePublicAddressOfAStoredFile(): void

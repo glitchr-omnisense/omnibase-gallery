@@ -49,7 +49,7 @@ $album->renumberPhotos();             // places 1, 2, 3...
 | `getFileUrl()` | its address on the site (the public directory taken off), for JSON-LD |
 | `getAlt()` | what a screen reader says: the alt typed, else the caption, else the album's title; empty without an album |
 | `getOwnAlt()` | the alt as typed, or null |
-| `getCreditLine()` | the credit with its sign: "Anna Meyer" is printed "© Anna Meyer"; a credit opening with ©, (c), "photo" or "foto" is left as it is |
+| `getCreditLine()` | the credit with its sign: "Jeanne Exemple" is printed "© Jeanne Exemple"; a credit opening with ©, (c), "photo" or "foto" is left as it is |
 
 Captions, alts, credits and labels are trimmed; an empty one is null. The
 picture is optional at the database level (`missable`): a photograph whose

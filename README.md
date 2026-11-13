@@ -26,7 +26,7 @@ knows no trade. No scroll library, no animation tied to scrolling.
 ## Install
 
 ```bash
-composer require omnibase/gallery:dev-main
+composer require omnibase/gallery
 ```
 
 ```php

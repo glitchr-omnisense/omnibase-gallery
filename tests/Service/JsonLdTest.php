@@ -15,7 +15,7 @@ final class JsonLdTest extends TestCase
         $album->setExcerpt('<p>Un habillage de <strong>chantier</strong>.</p>');
         $album->setMadeAt(new \DateTimeImmutable('2024-05-20'));
         $album->testPublishedAt = new \DateTimeImmutable('2024-06-01 09:00:00', new \DateTimeZone('UTC'));
-        $album->addPhoto((new TestPhoto('/srv/app/public/uploads/b.jpg', 2))->setCaption('De nuit')->setCredit('© Anna Meyer'));
+        $album->addPhoto((new TestPhoto('/srv/app/public/uploads/b.jpg', 2))->setCaption('De nuit')->setCredit('© Jeanne Exemple'));
         $album->addPhoto((new TestPhoto('/srv/app/public/uploads/a.jpg', 1))->setAlt('La palissade posée'));
         $album->addPhoto(new TestPhoto(null, 3));
 
@@ -38,8 +38,8 @@ final class JsonLdTest extends TestCase
             'contentUrl' => 'https://example.org/uploads/b.jpg',
             'name' => 'De nuit',
             'caption' => 'De nuit',
-            'creditText' => '© Anna Meyer',
-            'creator' => ['@type' => 'Person', 'name' => 'Anna Meyer'],
+            'creditText' => '© Jeanne Exemple',
+            'creator' => ['@type' => 'Person', 'name' => 'Jeanne Exemple'],
         ], $data['image'][1]);
     }
 
