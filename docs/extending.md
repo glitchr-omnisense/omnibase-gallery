@@ -18,7 +18,7 @@ namespace App\Entity\Portfolio;
 use App\Repository\Portfolio\RealisationRepository;
 use Base\Database\Attribute\DiscriminatorEntry;
 use Base\Gallery\Entity\Album;
-use Doctrine\ORM\Mapping as ORM;
+use Base\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RealisationRepository::class)]
 #[ORM\Table(name: 'portfolio_realisation')]

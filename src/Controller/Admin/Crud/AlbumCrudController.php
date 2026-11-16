@@ -22,7 +22,7 @@ use Base\Gallery\Controller\Admin\OpenToAdminsTrait;
 use Base\Gallery\Entity\Album;
 use Base\Entity\Thread\Taxon;
 use Base\Gallery\Form\PhotoType;
-use Omnibridge\Persistence\UnitOfWork;
+use Base\Contract\UnitOfWork;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
@@ -156,7 +156,7 @@ class AlbumCrudController extends AbstractCrudController
         /** @var Album $album */
         $album = $this->findEntity($entityId);
         $change($album);
-        $this->entityManager->flush();
+        $this->unitOfWork->flush();
         $this->addFlash('success', $flash);
 
         return $this->redirectToIndex();

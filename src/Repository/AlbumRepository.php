@@ -6,9 +6,12 @@ use Base\Entity\Thread\Tag;
 use Base\Entity\Thread\Taxon;
 use Base\Enum\ThreadState;
 use Base\Gallery\Entity\Album;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
+use Base\Database\Repository\Entities;
+use Base\Database\Repository\Finder\Criterion;
+use Base\Database\Repository\Finder\Group;
+use Base\Database\Repository\Finder\Parser;
+use Base\Database\Repository\Finders;
+use Base\Database\Repository\ServiceEntityRepository;
 
 /**
  * The published albums. Every query is on Album: with JOINED inheritance an
@@ -17,41 +20,42 @@ use Doctrine\Persistence\ManagerRegistry;
  * this one and passes its class. (INSTANCE OF takes the class's name, not
  * its discriminator as a parameter: the name covers the subclasses.)
  *
- * @extends ServiceEntityRepository<Album>
+ * On omnibase's finder language. The list's order - featured first, then the most recent work,
+ * COALESCE(madeAt, publishedAt), then the id - is an expression the language does not order by: the
+ * albums of the criteria are read, then ordered and sliced here (a gallery holds tens to a few hundred
+ * albums; a statement would be the way if one grew to thousands).
+ *
+ * Another class's entities (the tags, the taxa) are read through the repository's own backend (entitiesOf()):
+ * the constructor stays (backend, class) for the subclasses' repositories.
+ *
+ * @method Album|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Album|null findOneBy(array $criteria, ?array $orderBy = null)
+ * @method Album[]    findAll()
+ * @method Album[]    findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
  */
 class AlbumRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, string $entityClass = Album::class)
+    public function __construct(Finders $finders, string $entityClass = Album::class)
     {
-        parent::__construct($registry, $entityClass);
+        parent::__construct($finders, $entityClass);
     }
 
     /**
      * A page of the published albums - the featured ones first, then the
      * most recent work (madeAt, else the publication date) - of one taxon
-     * and/or one tag when their slugs are given. Paged by hand: Doctrine's
-     * Paginator walks the SQL with an output walker omnibase's own SqlWalker
-     * is incompatible with.
+     * and/or one tag when their slugs are given.
      *
      * @return list<Album>
      */
     public function findPublishedPage(int $page = 1, int $perPage = 24, ?string $taxon = null, ?string $tag = null, ?bool $featured = null): array
     {
-        $ids = array_column($this->ordered($this->filtered($this->published(), $taxon, $tag, $featured))
-            ->select('a.id', 'a.featured AS HIDDEN f', 'COALESCE(a.madeAt, a.publishedAt) AS HIDDEN d')
-            ->distinct()
-            ->setFirstResult(max(0, $page - 1) * $perPage)
-            ->setMaxResults($perPage)
-            ->getQuery()->getScalarResult(), 'id');
-
-        return $this->inOrder($ids);
+        return \array_slice($this->ordered($this->filtered($this->published(), $taxon, $tag, $featured)), max(0, $page - 1) * $perPage, $perPage);
     }
 
     public function countPublished(?string $taxon = null, ?string $tag = null, ?bool $featured = null): int
     {
-        return (int) $this->filtered($this->published(), $taxon, $tag, $featured)
-            ->select('COUNT(DISTINCT a.id)')
-            ->getQuery()->getSingleScalarResult();
+        // One taxon slug, one tag slug: a join gives each album once.
+        return $this->count($this->filtered($this->published(), $taxon, $tag, $featured));
     }
 
     /** @return list<Album> */
@@ -63,25 +67,23 @@ class AlbumRepository extends ServiceEntityRepository
     /** @return list<Album> every published album, for a sitemap */
     public function findAllPublished(): array
     {
-        return $this->ordered($this->published())->getQuery()->getResult();
+        return $this->ordered($this->published());
     }
 
     public function findOnePublished(string $slug): ?Album
     {
-        return $this->published()
-            ->andWhere('a.slug = :slug')->setParameter('slug', $slug)
-            ->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult();
+        return $this->findOneBy([...$this->published(), 'slug' => $slug]);
     }
 
     /** @return array{0: ?Album, 1: ?Album} the one before and the one after in the list's order */
     public function findNeighbours(Album $album): array
     {
-        $ids = array_map('intval', array_column($this->ordered($this->published())
-            ->select('a.id', 'a.featured AS HIDDEN f', 'COALESCE(a.madeAt, a.publishedAt) AS HIDDEN d')
-            ->getQuery()->getScalarResult(), 'id'));
+        $albums = [];
+        foreach ($this->ordered($this->published()) as $one) {
+            $albums[(int) $one->getId()] = $one;
+        }
 
-        return self::neighbours($ids, (int) $album->getId(), fn (int $id) => $this->find($id));
+        return self::neighbours(array_keys($albums), (int) $album->getId(), fn (int $id) => $albums[$id]);
     }
 
     /**
@@ -104,20 +106,21 @@ class AlbumRepository extends ServiceEntityRepository
         ];
     }
 
-    /** @return list<Tag> the tags of the published albums (of one taxon when given): the list's filters */
+    /**
+     * The tags of the published albums (of one taxon when given): the list's filters - the albums read,
+     * then the tags among theirs, highest priority first, then by slug, each once. (State only: an album
+     * scheduled for later gives its tags already, as the query did.)
+     *
+     * @return list<Tag>
+     */
     public function findTags(?string $taxon = null): array
     {
-        $query = $this->getEntityManager()->getRepository(Tag::class)->createQueryBuilder('t')
-            ->innerJoin('t.threads', 'a')
-            ->andWhere('a INSTANCE OF '.$this->getEntityName())
-            ->andWhere('a.state = :published')->setParameter('published', ThreadState::PUBLISH)
-            ->groupBy('t.id')
-            ->orderBy('t.priority', 'DESC')->addOrderBy('t.slug', 'ASC');
+        $criteria = ['state' => ThreadState::PUBLISH];
         if ($taxon) {
-            $query->innerJoin('a.taxa', 'x')->andWhere('x.slug = :taxon')->setParameter('taxon', $taxon);
+            $criteria['taxa.slug'] = $taxon;
         }
 
-        return $query->getQuery()->getResult();
+        return $this->ofAlbums(Tag::class, $this->findBy($criteria), ['priority' => 'DESC', 'slug' => 'ASC']);
     }
 
     /**
@@ -132,20 +135,13 @@ class AlbumRepository extends ServiceEntityRepository
      */
     public function findTaxa(string $class = Taxon::class): array
     {
-        // In their own order when the class has one (a "position" field), else as they were made.
-        $query = $this->getEntityManager()->getRepository($class)->createQueryBuilder('x');
-        if ($this->getEntityManager()->getClassMetadata($class)->hasField('position')) {
-            $query->orderBy('x.position', 'ASC');
-        }
-        $query->addOrderBy('x.id', 'ASC');
+        // In their own order when the class has one (a "position" property), else as they were made.
+        $orderBy = (property_exists($class, 'position') ? ['position' => 'ASC'] : []) + ['id' => 'ASC'];
         if (Taxon::class === $class) {
-            $query->innerJoin('x.threads', 'a')
-                ->andWhere('a INSTANCE OF '.$this->getEntityName())
-                ->andWhere('a.state = :published')->setParameter('published', ThreadState::PUBLISH)
-                ->groupBy('x.id');
+            return $this->ofAlbums($class, $this->findBy(['state' => ThreadState::PUBLISH]), $orderBy);
         }
 
-        return $query->getQuery()->getResult();
+        return $this->entitiesOf($class)->findBy([], $orderBy);
     }
 
     /** @param class-string<Taxon> $class */
@@ -160,46 +156,85 @@ class AlbumRepository extends ServiceEntityRepository
         return null;
     }
 
-    /** @param list<int|string> $ids @return list<Album> the albums of these ids, in the ids' order */
-    private function inOrder(array $ids): array
+    /**
+     * The entities of $class (Tag, Taxon) that hold one of these albums among their threads, in that order,
+     * each once; none without an album (the inner join's answer).
+     *
+     * @param class-string $class
+     * @param list<Album>  $albums
+     *
+     * @return list<object>
+     */
+    private function ofAlbums(string $class, array $albums, array $orderBy): array
     {
-        if (!$ids) {
+        if (!$albums) {
             return [];
         }
-        $albums = [];
-        foreach ($this->createQueryBuilder('a')->andWhere('a.id IN (:ids)')->setParameter('ids', $ids)->getQuery()->getResult() as $album) {
-            $albums[$album->getId()] = $album;
+        $found = [];
+        foreach ($this->entitiesOf($class)->findBy(['threads' => $albums], $orderBy) as $entity) {
+            $found[spl_object_id($entity)] ??= $entity;
         }
 
-        return array_values(array_filter(array_map(fn ($id) => $albums[(int) $id] ?? null, $ids)));
+        return array_values($found);
     }
 
-    private function filtered(QueryBuilder $query, ?string $taxon, ?string $tag, ?bool $featured): QueryBuilder
+    /**
+     * The entities of another class on this repository's backend, with the whole finder language (the parent
+     * class serves any entity).
+     *
+     * @param class-string $class
+     */
+    private function entitiesOf(string $class): Entities
+    {
+        return new ServiceEntityRepository($this->finders(), $class);
+    }
+
+    /**
+     * The albums of these criteria in the list's order: featured first, then COALESCE(madeAt, publishedAt)
+     * newest first, then the id, highest first.
+     *
+     * @return list<Album>
+     */
+    private function ordered(array $criteria): array
+    {
+        $albums = [];
+        foreach ($this->findBy($criteria) as $album) {
+            $albums[(int) $album->getId()] = $album;
+        }
+        usort($albums, static function (Album $a, Album $b): int {
+            $d = static fn (Album $x): ?string => ($x->getMadeAt() ?? $x->getPublishedAt())?->format('Y-m-d H:i:s');
+
+            return [(bool) $b->isFeatured(), $d($b), $b->getId()] <=> [(bool) $a->isFeatured(), $d($a), $a->getId()];
+        });
+
+        return $albums;
+    }
+
+    /** @return array<int|string, mixed> */
+    private function filtered(array $criteria, ?string $taxon, ?string $tag, ?bool $featured): array
     {
         if ($taxon) {
-            $query->innerJoin('a.taxa', 'x')->andWhere('x.slug = :taxon')->setParameter('taxon', $taxon);
+            $criteria['taxa.slug'] = $taxon;
         }
         if ($tag) {
-            $query->innerJoin('a.tags', 't')->andWhere('t.slug = :tag')->setParameter('tag', $tag);
+            $criteria['tags.slug'] = $tag;
         }
         if (null !== $featured) {
-            $query->andWhere('a.featured = :featured')->setParameter('featured', $featured);
+            $criteria['featured'] = $featured;
         }
 
-        return $query;
+        return $criteria;
     }
 
-    private function ordered(QueryBuilder $query): QueryBuilder
+    /** @return array<int|string, mixed> published, and their publication date come */
+    private function published(): array
     {
-        return $query
-            ->addSelect('a.featured AS HIDDEN f', 'COALESCE(a.madeAt, a.publishedAt) AS HIDDEN d')
-            ->orderBy('f', 'DESC')->addOrderBy('d', 'DESC')->addOrderBy('a.id', 'DESC');
-    }
-
-    private function published(): QueryBuilder
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.state = :published')->setParameter('published', ThreadState::PUBLISH)
-            ->andWhere('a.publishedAt IS NULL OR a.publishedAt <= CURRENT_TIMESTAMP()');
+        return [
+            'state' => ThreadState::PUBLISH,
+            Group::of(Parser::SEPARATOR_OR,
+                Criterion::of('publishedAt', null, Parser::OPTION_NULL),
+                Criterion::of('publishedAt', new \DateTime(), Parser::OPTION_LOWER_EQUAL),
+            ),
+        ];
     }
 }

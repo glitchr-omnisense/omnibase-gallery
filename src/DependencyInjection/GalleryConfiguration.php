@@ -3,7 +3,7 @@
 namespace Base\Gallery\DependencyInjection;
 
 use Base\Entity\Thread\Taxon;
-use Omnibridge\Symfony\Omnibase\Bundle\AbstractBaseConfiguration;
+use Base\Bundle\AbstractBaseConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 class GalleryConfiguration extends AbstractBaseConfiguration
